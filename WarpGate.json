@@ -1,5 +1,13 @@
 {
     "BaseRange": 1,
     "BaseLinkTime": 1,
-    "SecondsPerPayload": 1
+    "BasePayloadTime": 1,
+    
+    
+    "Range": "BaseRange",
+    
+    //Scale link time based on distance linking, distant links take exponentially longer
+    "LinkTime": "BaseLinkTime + (BaseLinkTime * (Gate.Distance / Range)) ^ 2",
+    
+    "PayloadTime": "BasePayloadTime",
 }
