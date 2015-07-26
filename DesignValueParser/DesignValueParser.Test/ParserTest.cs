@@ -10,7 +10,7 @@ namespace DesignValueParser.Test
     ""A"": 2,
     ""B"": 3,
     ""C"": ""A * B"",
-    ""D"":""A * B * Context.C""
+    ""D"":""A * B * Context.B.A""
 }";
 
         [TestMethod]
@@ -33,16 +33,20 @@ namespace DesignValueParser.Test
             Assert.AreEqual(6, r.Evaluate<object>("C")(null));
         }
 
-        //[TestMethod]
-        //public void AssertThat_EvaluatingFormula_WithContext_ProducesCorrectValue()
-        //{
-        //    Parser p = new Parser();
-        //    var r = p.Parse<TestResultType>(new StringReader(JSON));
+        [TestMethod]
+        public void AssertThat_EvaluatingFormula_WithContext_ProducesCorrectValue()
+        {
+            Parser p = new Parser();
+            var r = p.Parse<TestResultType>(new StringReader(JSON));
 
-        //    Assert.AreEqual(24, r.Evaluate<ContextType>("D")(new ContextType {
-        //         A = 4
-        //    }));
-        //}
+            Assert.AreEqual(30, r.Evaluate<ContextType>("D")(new ContextType
+            {
+                A = 4,
+                B = new ContextType {
+                    A = 5
+                }
+            }));
+        }
     }
 
     public class TestResultType
@@ -61,5 +65,7 @@ namespace DesignValueParser.Test
         : Result
     {
         public decimal A { get; set; }
+
+        public ContextType B { get; set; }
     }
 }

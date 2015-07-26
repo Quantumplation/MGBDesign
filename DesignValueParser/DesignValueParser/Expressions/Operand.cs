@@ -1,5 +1,5 @@
 ﻿
-namespace DesignValueParser.Expression
+namespace DesignValueParser.Expressions
 {
     abstract class Operand
     {
@@ -38,15 +38,12 @@ namespace DesignValueParser.Expression
 
     internal class BinaryOperator : Operand
     {
-        public OperatorNotation Notation { get; private set; }
-
         public Operand LeftOperand { get; set; }
         public Operand RightOperand { get; set; }
 
-        public BinaryOperator(string token, OperatorNotation notation)
+        public BinaryOperator(string token)
             : base(token)
         {
-            Notation = notation;
         }
     }
 

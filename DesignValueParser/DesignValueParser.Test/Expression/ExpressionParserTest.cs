@@ -1,4 +1,4 @@
-﻿using DesignValueParser.Expression;
+﻿using DesignValueParser.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DesignValueParser.Test.Expression

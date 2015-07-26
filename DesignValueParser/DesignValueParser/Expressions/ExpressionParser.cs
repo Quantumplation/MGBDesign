@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace DesignValueParser.Expression
+namespace DesignValueParser.Expressions
 {
     internal enum TokenClass
     {
@@ -17,11 +17,6 @@ namespace DesignValueParser.Expression
     {
         Right,
         Left
-    }
-
-    internal enum OperatorNotation
-    {
-        Infix
     }
 
     internal class ExpressionParser
@@ -72,7 +67,7 @@ namespace DesignValueParser.Expression
                                 }
                             }
                         }
-                        _stack.Push(new BinaryOperator(token, OperatorNotation.Infix));
+                        _stack.Push(new BinaryOperator(token));
                         break;
 
                     case TokenClass.LeftParen:
