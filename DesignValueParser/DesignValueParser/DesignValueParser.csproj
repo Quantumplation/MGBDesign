@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DecimalMath.DecimalEx, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DecimalMath.DecimalEx.1.0.0.0\lib\portable-net40+sl50+win+wpa81+wp80\DecimalMath.DecimalEx.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -44,12 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DesignValuesAccessor.cs" />
     <Compile Include="Expressions\Conversion.cs" />
     <Compile Include="Expressions\ExpressionParser.cs" />
     <Compile Include="Expressions\Operand.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Result.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

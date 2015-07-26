@@ -1,14 +1,15 @@
-﻿using System;
+﻿using DecimalMath;
+using System;
 using System.Linq.Expressions;
 
 namespace DesignValueParser.Expressions
 {
     internal static class Conversion
     {
-        public static LambdaExpression Convert<TContext>(this Operand root, Type selfType)
+        public static LambdaExpression Convert<TContext, TThis>(this Operand root)
         {
             var contextParam = Expression.Parameter(typeof(TContext), "context");
-            var selfParam = Expression.Parameter(selfType, "self");
+            var selfParam = Expression.Parameter(typeof(TThis), "self");
 
             return Expression.Lambda(
                 Convert(root, contextParam, selfParam),
@@ -35,7 +36,11 @@ namespace DesignValueParser.Expressions
                     case "-":
                         return Expression.Subtract(Convert(binOp.LeftOperand, contextParam, selfType), Convert(binOp.RightOperand, contextParam, selfType));
                     case "^":
-                        return Expression.Power(Convert(binOp.LeftOperand, contextParam, selfType), Convert(binOp.RightOperand, contextParam, selfType));
+                        return Expression.Call(typeof(DecimalEx), "Pow",
+                            new Type[0],
+                            Convert(binOp.LeftOperand, contextParam, selfType),
+                            Convert(binOp.RightOperand, contextParam, selfType)
+                        );
                     default:
                         throw new InvalidOperationException("Unknown Binary Operator \"" + binOp.Token + "\"");
                 }
@@ -56,15 +61,20 @@ namespace DesignValueParser.Expressions
             var valOp = root as Value;
             if (valOp != null)
             {
+                //A value could be a number, if it is we'll run with that
+                decimal d;
+                if (decimal.TryParse(valOp.Token, out d))
+                    return Expression.Constant(d);
+
+                //If it's got a path then we should follow it
                 if (valOp.Token.Contains("."))
                 {
                     var split = valOp.Token.Split('.');
 
-                    if (split[0] != "Context")
-                        throw new InvalidOperationException("Cannot access non-context object");
+                    //If context isn't specified, we assume we're accessing self
+                    Expression obj = split[0] == "Context" ? contextParam : selfType;
 
                     //Follow down chain of accessors
-                    Expression obj = contextParam;
                     for (int i = 1; i < split.Length; i++)
                         obj = Expression.PropertyOrField(obj, split[i]);
 

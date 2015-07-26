@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
 namespace DesignValueParser.Test
@@ -10,7 +11,7 @@ namespace DesignValueParser.Test
     ""A"": 2,
     ""B"": 3,
     ""C"": ""A * B"",
-    ""D"":""A * B * Context.B.A""
+    ""D"":""A * B * Context.F.E""
 }";
 
         [TestMethod]
@@ -30,7 +31,9 @@ namespace DesignValueParser.Test
             Parser p = new Parser();
             var r = p.Parse<TestResultType>(new StringReader(JSON));
 
-            Assert.AreEqual(6, r.Evaluate<object>("C")(null));
+            var acs = new TestAccessor(r);
+
+            Assert.AreEqual(6, acs.C(null));
         }
 
         [TestMethod]
@@ -39,18 +42,42 @@ namespace DesignValueParser.Test
             Parser p = new Parser();
             var r = p.Parse<TestResultType>(new StringReader(JSON));
 
-            Assert.AreEqual(30, r.Evaluate<ContextType>("D")(new ContextType
+            var acs = new TestAccessor(r);
+
+            Assert.AreEqual(30, acs.D(new ContextType
             {
-                A = 4,
-                B = new ContextType {
-                    A = 5
+                E = 4,
+                F = new ContextType {
+                    E = 5
                 }
             }));
         }
     }
 
+    public class TestAccessor
+        : DesignValuesAccessor<ContextType, TestResultType, TestAccessor>
+    {
+        public TestAccessor(TestResultType values)
+            : base(values)
+        {
+            _c = Evaluate(values.C);
+            _d = Evaluate(values.D);
+        }
+
+        private readonly Func<ContextType, decimal> _c;
+        public decimal C(ContextType ctx)
+        {
+            return _c(ctx);
+        }
+
+        private readonly Func<ContextType, decimal> _d;
+        public decimal D(ContextType ctx)
+        {
+            return _d(ctx);
+        }
+    }
+
     public class TestResultType
-        : Result
     {
         public decimal A { get; set; }
 
@@ -62,10 +89,9 @@ namespace DesignValueParser.Test
     }
 
     public class ContextType
-        : Result
     {
-        public decimal A { get; set; }
+        public decimal E { get; set; }
 
-        public ContextType B { get; set; }
+        public ContextType F { get; set; }
     }
 }

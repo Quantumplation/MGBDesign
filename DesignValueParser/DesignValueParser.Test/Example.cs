@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using DesignValueParser.Expressions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
@@ -25,7 +26,6 @@ namespace DesignValueParser.Test
     /// This is the deserialization object, it should contain exactly the same fields as the json file
     /// </summary>
     public class GateValues
-        : Result    // <-- deserialization types must inherit from Result
     {
         // Constants
         public decimal BaseRange { get; set; }
@@ -45,13 +45,13 @@ namespace DesignValueParser.Test
     /* ""Context"" Refers to the warp gate in question */
 
     /* Constant values */
-    ""BaseRange"": 1,
-    ""BaseLinkTime"": 1,
+    ""BaseRange"": 20,
+    ""BaseLinkTime"": 10,
     ""BasePayloadTime"": 1,
     
     //Formulaic values
     ""Range"": ""BaseRange"",
-    ""LinkTime"": ""BaseLinkTime + (BaseLinkTime * (Self.Distance / Range)) ^ 2"",
+    ""LinkTime"": ""BaseLinkTime + (BaseLinkTime * (Context.Distance / 2)) ^ 0.5"",
     ""PayloadTime"": ""BasePayloadTime""
 }";
 
@@ -60,13 +60,13 @@ namespace DesignValueParser.Test
         {
             //Read the JSON config straight off github
             var gateConstants = new Parser().Parse<GateValues>(new StringReader(JSON));
+            var accessor = new GateValuesAccessor(gateConstants);
 
             //This is a gate instance somewhere in the universe
             Gate myGate = new Gate();
 
             //Evaluate a value from the file
-            decimal range = gateConstants.Evaluate<Gate>("Range")(myGate);
-                                                        // ^- Name of the parameter you want
+            var range = accessor.Range(myGate);
 
             Console.WriteLine(range);
         }
@@ -76,15 +76,17 @@ namespace DesignValueParser.Test
     /// This is an accessor, I suggest you wrap all your deserialization types like this. This hides away the ugly details of deserialization and caches the expensive delegate creation
     /// </summary>
     public class GateValuesAccessor
+        : DesignValuesAccessor<Gate, GateValues, GateValuesAccessor>
     {
-        public GateValuesAccessor(Result values)
+        public GateValuesAccessor(GateValues values)
+            : base(values)
         {
-            _range = values.Evaluate<Gate>("Range");
-            _linkTime = values.Evaluate<Gate>("LinkTime");
-            _payloadTime = values.Evaluate<Gate>("PayloadTime");
+            _range = Evaluate(values.Range);
+            _linkTime = Evaluate(values.LinkTime);
+            _payloadTime = Evaluate(values.PayloadTime);                        
         }
 
-        private readonly Func<Gate, decimal> _range; 
+        private readonly Func<Gate, decimal> _range;
         public decimal Range(Gate gate)
         {
             return _range(gate);
