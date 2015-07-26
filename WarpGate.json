@@ -1,13 +1,16 @@
 {
-    "BaseRange": 1,
-    "BaseLinkTime": 1,
-    "BasePayloadTime": 1,
+    //"Self" Refers to the warp gate in question
+
+    //Constant values
+    "BaseRange": 1,         // LY
+    "BaseLinkTime": 1,      // S
+    "BasePayloadTime": 1,   // S
     
-    
+    //Formulaic values
     "Range": "BaseRange",
     
     //Scale link time based on distance linking, distant links take exponentially longer
-    "LinkTime": "BaseLinkTime + (BaseLinkTime * (Gate.Distance / Range)) ^ 2",
+    "LinkTime": "BaseLinkTime + (BaseLinkTime * (Self.Distance / Range)) ^ 2",
     
     "PayloadTime": "BasePayloadTime",
 }
