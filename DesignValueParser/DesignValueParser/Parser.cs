@@ -1,5 +1,5 @@
-﻿using Jil;
-using System.IO;
+﻿using System.IO;
+using Newtonsoft.Json;
 
 namespace DesignValueParser
 {
@@ -8,7 +8,7 @@ namespace DesignValueParser
         public TResult Parse<TResult>(TextReader json)
             where TResult : Result
         {
-            return JSON.Deserialize<TResult>(json);
+            return JsonSerializer.Create().Deserialize<TResult>(new JsonTextReader(json));
         }
     }
 }

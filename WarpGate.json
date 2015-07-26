@@ -1,5 +1,5 @@
 {
-    //"Self" Refers to the warp gate in question
+    //"Context" Refers to the warp gate in question
 
     //Constant values
     "BaseRange": 1,         // LY
@@ -10,7 +10,7 @@
     "Range": "BaseRange",
     
     //Scale link time based on distance linking, distant links take exponentially longer
-    "LinkTime": "BaseLinkTime + (BaseLinkTime * (Self.Distance / Range)) ^ 2",
+    "LinkTime": "BaseLinkTime + (BaseLinkTime * (Context.Distance / Range)) ^ 2",
     
     "PayloadTime": "BasePayloadTime",
 }

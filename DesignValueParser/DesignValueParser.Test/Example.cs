@@ -42,10 +42,14 @@ namespace DesignValueParser.Test
     public class Example
     {
                     private const string JSON = @"{
+    /* ""Context"" Refers to the warp gate in question */
+
+    /* Constant values */
     ""BaseRange"": 1,
     ""BaseLinkTime"": 1,
     ""BasePayloadTime"": 1,
     
+    //Formulaic values
     ""Range"": ""BaseRange"",
     ""LinkTime"": ""BaseLinkTime + (BaseLinkTime * (Self.Distance / Range)) ^ 2"",
     ""PayloadTime"": ""BasePayloadTime""
