@@ -60,6 +60,8 @@ namespace DesignValueParser.Expressions
                 {
                     case "-":
                         return Expression.Negate(Convert(unOp.Operand, contextParam, deserializedParam, selfParam));
+                    case "$":
+                        return Expression.Call(selfParam, unOp.Operand.Token, null, contextParam);
                     default:
                         throw new InvalidOperationException("Unknown Unary Operator \"" + unOp.Token + "\"");
                 }

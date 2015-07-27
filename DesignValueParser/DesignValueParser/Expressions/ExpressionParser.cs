@@ -10,7 +10,8 @@ namespace DesignValueParser.Expressions
         Value,
         Operator,
         LeftParen,
-        RightParen
+        RightParen,
+        Function
     }
 
     internal enum Associativity
@@ -31,7 +32,7 @@ namespace DesignValueParser.Expressions
         public void ParseExpression(string expression)
         {
             //Dijkstra's Shunting Yard Algorithm
-            Regex re = new Regex(@"([\+\-\*\(\)\^\/\ ])");
+            Regex re = new Regex(@"([\+\$\-\*\(\)\^\/\ ])");
             List<String> tokenList = re.Split(expression).Select(t => t.Trim()).Where(t => t != "").ToList();
 
             for (int tokenNumber = 0; tokenNumber < tokenList.Count(); ++tokenNumber)
@@ -49,6 +50,11 @@ namespace DesignValueParser.Expressions
                         if (token == "-" && (_stack.Count == 0 || tokenList[tokenNumber - 1] == "("))
                         {
                             _stack.Push(new Negative());
+                            break;
+                        }
+                        if (token == "$")
+                        {
+                            _stack.Push(new Evaluate());
                             break;
                         }
                         if (_stack.Count > 0)
@@ -144,7 +150,7 @@ namespace DesignValueParser.Expressions
         }
 
         private static readonly string[] _operators = {
-            "+", "-", "*", "/", "^"
+            "+", "-", "*", "/", "^", "$"
         };
 
         private static TokenClass GetTokenClass(String token)
@@ -167,7 +173,7 @@ namespace DesignValueParser.Expressions
 
         private static Associativity GetOperatorAssociativity(String token)
         {
-            if (token == "^")
+            if (token == "^" || token == "$")
                 return Associativity.Right;
             else
                 return Associativity.Left;
@@ -187,6 +193,9 @@ namespace DesignValueParser.Expressions
 
                 case "^":
                     return 3;
+
+                case "$":
+                    return 4;
 
                 default:
                     throw new ArgumentException("Invalid token");

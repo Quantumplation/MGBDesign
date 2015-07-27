@@ -69,7 +69,7 @@ namespace DesignValueParser.Test
     
     //Formulaic values
     ""Range"": ""BaseRange"",
-    ""LinkTime"": ""BaseLinkTime + (BaseLinkTime * (Context.Distance / Range())) ^ 0.5"",
+    ""LinkTime"": ""BaseLinkTime + (BaseLinkTime * (Context.Distance / $Range)) ^ 0.5"",
     ""PayloadTime"": ""BasePayloadTime""
 }";
 
@@ -83,10 +83,10 @@ namespace DesignValueParser.Test
             //This is a gate instance somewhere in the universe
             Gate myGate = new Gate();
 
-            //Evaluate a value from the file
-            var range = accessor.Range(myGate);
-
-            Console.WriteLine(range);
+            //Evaluate values from the file
+            Console.WriteLine(accessor.Range(myGate));
+            Console.WriteLine(accessor.LinkTime(myGate));
+            Console.WriteLine(accessor.PayloadTime(myGate));
         }
     }
 
@@ -99,8 +99,8 @@ namespace DesignValueParser.Test
         public GateValuesAccessor(GateValues values)
             : base(values)
         {
-            _range = Evaluate(values.Range);
             _linkTime = Evaluate(values.LinkTime);
+            _range = Evaluate(values.Range);
             _payloadTime = Evaluate(values.PayloadTime);                        
         }
 

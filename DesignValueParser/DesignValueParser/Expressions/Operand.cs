@@ -1,7 +1,7 @@
 ﻿
 namespace DesignValueParser.Expressions
 {
-    abstract class Operand
+    internal abstract class Operand
     {
         public string Token { get; private set; }
 
@@ -58,10 +58,20 @@ namespace DesignValueParser.Expressions
         }
     }
 
-    internal class Negative : UnaryOperator
+    internal class Negative
+        : UnaryOperator
     {
         public Negative()
-            : base("")
+            : base("-")
+        {
+        }
+    }
+
+    internal class Evaluate
+        : UnaryOperator
+    {
+        public Evaluate()
+            : base("$")
         {
         }
     }

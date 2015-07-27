@@ -1,10 +1,10 @@
 {
-    //"Context" Refers to the warp gate in question
+    //"Context" is an IWarpGate
 
     //Constant values
     "BaseRange": 1,         // LY
     "BaseLinkTime": 1,      // S
-    "BasePayloadTime": 1,   // S
+    "BasePayloadTime": 1,   // S/LY
     
     //Formulaic values
     "Range": "BaseRange",
@@ -12,5 +12,6 @@
     //Scale link time based on distance linking, distant links take exponentially longer
     "LinkTime": "BaseLinkTime + (BaseLinkTime * (Context.Distance / Range)) ^ 2",
     
-    "PayloadTime": "BasePayloadTime",
+    //Scale travel time by distance
+    "PayloadTime": "Context.Distance * BasePayloadTime",
 }
