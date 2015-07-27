@@ -1,10 +1,17 @@
 {
     //"Context" is an IWarpGate
 
-    //Constant values
-    "BaseRange": 1,         // LY
-    "BaseLinkTime": 1,      // S
-    "BasePayloadTime": 1,   // S/LY
+    // ----------------------
+    // Constant Values
+    // ----------------------
+    
+    "BaseRange": 1,     // LY
+    "BaseLinkTime": 1,  // S
+    "BaseSpeed": 1,     // LY/S
+    
+    // ----------------------
+    // Formulaic Values
+    // ----------------------
     
     // Range this gate may link (Lightyears)
     "Range": "BaseRange",
@@ -12,6 +19,6 @@
     // Time it takes to establish a link to another gate (Seconds)
     "LinkTime": "BaseLinkTime + (BaseLinkTime * (Context.Distance / Range)) ^ 2",
     
-    // Travel time along this link
-    "PayloadTime": "Context.Distance * BasePayloadTime",
+    // Speed of travel along this link
+    "Speed": "BaseSpeed",
 }

@@ -7,12 +7,12 @@ namespace DesignValueParser.Interfaces.Accessors
         // Constants
         public decimal BaseRange { get; set; }
         public decimal BaseLinkTime { get; set; }
-        public decimal BasePayloadTime { get; set; }
+        public decimal BaseSpeed { get; set; }
 
         // Formulas (declared as strings, since this is their type in JSON)
         public string Range { get; set; }
         public string LinkTime { get; set; }
-        public string PayloadTime { get; set; }
+        public string Speed { get; set; }
     }
 
     public class WarpGateAccessor
@@ -23,7 +23,7 @@ namespace DesignValueParser.Interfaces.Accessors
         {
             _linkTime = Evaluate(deserialized.LinkTime);
             _range = Evaluate(deserialized.Range);
-            _payloadTime = Evaluate(deserialized.PayloadTime);
+            _speed = Evaluate(deserialized.Speed);
         }
 
         private readonly Func<IWarpGate, decimal> _range;
@@ -38,10 +38,10 @@ namespace DesignValueParser.Interfaces.Accessors
             return _linkTime(gate);
         }
 
-        private readonly Func<IWarpGate, decimal> _payloadTime;
-        public decimal PayloadTime(IWarpGate gate)
+        private readonly Func<IWarpGate, decimal> _speed;
+        public decimal Speed(IWarpGate gate)
         {
-            return _payloadTime(gate);
+            return _speed(gate);
         }
     }
 }
