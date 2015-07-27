@@ -5,9 +5,10 @@
     // Constant Values
     // ----------------------
     
-    "BaseRange": 1,     // LY
-    "BaseLinkTime": 1,  // S
-    "BaseSpeed": 1,     // LY/S
+    "BaseRange": 1,         // LY
+    "BaseLinkTime": 1,      // S
+    "BaseSpeed": 1,         // LY/S
+    "BaseLoadingTime": 1    // S
     
     // ----------------------
     // Formulaic Values
@@ -21,4 +22,7 @@
     
     // Speed of travel along this link
     "Speed": "BaseSpeed",
+    
+    // Time it takes a payload to enter the gate (only 1 may enter at a time)
+    "LoadingTime": "BaseLoadingTime",
 }
