@@ -1,10 +1,20 @@
-﻿using DesignValueParser.Expressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
 namespace DesignValueParser.Test
 {
+    public class Star
+    {
+        public decimal Mass
+        {
+            get
+            {
+                return 100000;
+            }
+        }
+    }
+
     /// <summary>
     /// Your "context" for these operations is a gate object, this provides properties with certain information about this individual gate
     /// </summary>
@@ -18,6 +28,14 @@ namespace DesignValueParser.Test
             get
             {
                 return 10;
+            }
+        }
+
+        public Star Star
+        {
+            get
+            {
+                return new Star();
             }
         }
     }
@@ -51,7 +69,7 @@ namespace DesignValueParser.Test
     
     //Formulaic values
     ""Range"": ""BaseRange"",
-    ""LinkTime"": ""BaseLinkTime + (BaseLinkTime * (Context.Distance / 2)) ^ 0.5"",
+    ""LinkTime"": ""BaseLinkTime + (BaseLinkTime * (Context.Distance / Range())) ^ 0.5"",
     ""PayloadTime"": ""BasePayloadTime""
 }";
 
@@ -76,7 +94,7 @@ namespace DesignValueParser.Test
     /// This is an accessor, I suggest you wrap all your deserialization types like this. This hides away the ugly details of deserialization and caches the expensive delegate creation
     /// </summary>
     public class GateValuesAccessor
-        : DesignValuesAccessor<Gate, GateValues, GateValuesAccessor>
+        : DesignValuesAccessor<Gate, GateValues>
     {
         public GateValuesAccessor(GateValues values)
             : base(values)

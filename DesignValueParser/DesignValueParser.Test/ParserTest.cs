@@ -55,7 +55,7 @@ namespace DesignValueParser.Test
     }
 
     public class TestAccessor
-        : DesignValuesAccessor<ContextType, TestResultType, TestAccessor>
+        : DesignValuesAccessor<ContextType, TestResultType>
     {
         public TestAccessor(TestResultType values)
             : base(values)

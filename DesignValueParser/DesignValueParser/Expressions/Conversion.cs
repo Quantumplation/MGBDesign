@@ -6,21 +6,28 @@ namespace DesignValueParser.Expressions
 {
     internal static class Conversion
     {
-        public static LambdaExpression Convert<TContext, TThis>(this Operand root)
+        public static LambdaExpression Convert<TContext, TDeserialized>(this Operand root, Type selfType)
         {
+            //Context object in universe
             var contextParam = Expression.Parameter(typeof(TContext), "context");
-            var selfParam = Expression.Parameter(typeof(TThis), "self");
+
+            //Deserialized object (raw values from JSON)
+            var deserializedParam = Expression.Parameter(typeof(TDeserialized), "deserialized");
+
+            //Self object (methods for evaluating expressions)
+            var selfParam = Expression.Parameter(selfType, "self");
 
             return Expression.Lambda(
-                Convert(root, contextParam, selfParam),
+                Convert(root, contextParam, deserializedParam, selfParam),
                 new ParameterExpression[] {
                     contextParam,
+                    deserializedParam,
                     selfParam
                 }
             );
         }
 
-        private static Expression Convert(Operand root, ParameterExpression contextParam, ParameterExpression selfType)
+        private static Expression Convert(Operand root, ParameterExpression contextParam, ParameterExpression deserializedParam, ParameterExpression selfParam)
         {
             var binOp = root as BinaryOperator;
             if (binOp != null)
@@ -28,18 +35,18 @@ namespace DesignValueParser.Expressions
                 switch (binOp.Token)
                 {
                     case "*":
-                        return Expression.Multiply(Convert(binOp.LeftOperand, contextParam, selfType), Convert(binOp.RightOperand, contextParam, selfType));
+                        return Expression.Multiply(Convert(binOp.LeftOperand, contextParam, deserializedParam, selfParam), Convert(binOp.RightOperand, contextParam, deserializedParam, selfParam));
                     case "+":
-                        return Expression.Add(Convert(binOp.LeftOperand, contextParam, selfType), Convert(binOp.RightOperand, contextParam, selfType));
+                        return Expression.Add(Convert(binOp.LeftOperand, contextParam, deserializedParam, selfParam), Convert(binOp.RightOperand, contextParam, deserializedParam, selfParam));
                     case "/":
-                        return Expression.Divide(Convert(binOp.LeftOperand, contextParam, selfType), Convert(binOp.RightOperand, contextParam, selfType));
+                        return Expression.Divide(Convert(binOp.LeftOperand, contextParam, deserializedParam, selfParam), Convert(binOp.RightOperand, contextParam, deserializedParam, selfParam));
                     case "-":
-                        return Expression.Subtract(Convert(binOp.LeftOperand, contextParam, selfType), Convert(binOp.RightOperand, contextParam, selfType));
+                        return Expression.Subtract(Convert(binOp.LeftOperand, contextParam, deserializedParam, selfParam), Convert(binOp.RightOperand, contextParam, deserializedParam, selfParam));
                     case "^":
                         return Expression.Call(typeof(DecimalEx), "Pow",
                             new Type[0],
-                            Convert(binOp.LeftOperand, contextParam, selfType),
-                            Convert(binOp.RightOperand, contextParam, selfType)
+                            Convert(binOp.LeftOperand, contextParam, deserializedParam, selfParam),
+                            Convert(binOp.RightOperand, contextParam, deserializedParam, selfParam)
                         );
                     default:
                         throw new InvalidOperationException("Unknown Binary Operator \"" + binOp.Token + "\"");
@@ -52,7 +59,7 @@ namespace DesignValueParser.Expressions
                 switch (unOp.Token)
                 {
                     case "-":
-                        return Expression.Negate(Convert(unOp.Operand, contextParam, selfType));
+                        return Expression.Negate(Convert(unOp.Operand, contextParam, deserializedParam, selfParam));
                     default:
                         throw new InvalidOperationException("Unknown Unary Operator \"" + unOp.Token + "\"");
                 }
@@ -72,16 +79,23 @@ namespace DesignValueParser.Expressions
                     var split = valOp.Token.Split('.');
 
                     //If context isn't specified, we assume we're accessing self
-                    Expression obj = split[0] == "Context" ? contextParam : selfType;
+                    Expression obj = deserializedParam;
 
                     //Follow down chain of accessors
-                    for (int i = 1; i < split.Length; i++)
+                    int start = 0;
+                    if (split[0] == "Context")
+                    {
+                        obj = contextParam;
+                        start++;
+                    }
+
+                    for (int i = start; i < split.Length; i++)
                         obj = Expression.PropertyOrField(obj, split[i]);
 
                     return obj;
                 }
 
-                return Expression.PropertyOrField(selfType, valOp.Token);
+                return Expression.PropertyOrField(deserializedParam, valOp.Token);
             }
 
             throw new NotImplementedException();

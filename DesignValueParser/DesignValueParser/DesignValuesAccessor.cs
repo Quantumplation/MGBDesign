@@ -3,7 +3,7 @@ using System;
 
 namespace DesignValueParser
 {
-    public class DesignValuesAccessor<TContext, TSerialization, TSelf>
+    public class DesignValuesAccessor<TContext, TSerialization>
     {
         private readonly TSerialization _values;
 
@@ -18,9 +18,9 @@ namespace DesignValueParser
             ExpressionParser p = new ExpressionParser();
             p.ParseExpression(expression);
 
-            var f = p.ExpressionTree.Convert<TContext, TSerialization>().Compile();
+            var f = p.ExpressionTree.Convert<TContext, TSerialization>(GetType()).Compile();
 
-            return (context) => (decimal)f.DynamicInvoke(context, _values);
+            return (context) => (decimal)f.DynamicInvoke(context, _values, this);
         }
     }
 }
