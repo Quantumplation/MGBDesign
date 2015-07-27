@@ -52,15 +52,19 @@
     <Compile Include="Expressions\Conversion.cs" />
     <Compile Include="Expressions\ExpressionParser.cs" />
     <Compile Include="Expressions\Operand.cs" />
+    <Compile Include="Interfaces\Accessors\CarrierAccessor.cs" />
+    <Compile Include="Interfaces\Accessors\WarpGateAccessor.cs" />
+    <Compile Include="Interfaces\ICarrier.cs" />
+    <Compile Include="Interfaces\IStar.cs" />
+    <Compile Include="Interfaces\IStarSystem.cs" />
+    <Compile Include="Interfaces\IWarpGate.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

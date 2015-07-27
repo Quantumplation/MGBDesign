@@ -6,12 +6,12 @@
     "BaseLinkTime": 1,      // S
     "BasePayloadTime": 1,   // S/LY
     
-    //Formulaic values
+    // Range this gate may link (Lightyears)
     "Range": "BaseRange",
     
-    //Scale link time based on distance linking, distant links take exponentially longer
+    // Time it takes to establish a link to another gate (Seconds)
     "LinkTime": "BaseLinkTime + (BaseLinkTime * (Context.Distance / Range)) ^ 2",
     
-    //Scale travel time by distance
+    // Travel time along this link
     "PayloadTime": "Context.Distance * BasePayloadTime",
 }
