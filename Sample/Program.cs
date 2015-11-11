@@ -11,19 +11,20 @@ namespace Sample
     {
         static void Main(string[] args)
         {
-            var interpreter = new Interpreter.Interpreter();
-            var context = new TravelContext {Distance = 100};
-            var last = 0m;
-            while (true)
-            {
-                var constants = interpreter.Get<TravelConstants>("D:\\proj\\MGBDesign\\DesignValues\\ConcreteTravelConstants.cs", context);
-                if (last != constants.LinkTime)
-                {
-                    Console.Clear();
-                    Console.WriteLine($"LinkTime: {constants.LinkTime}");
-                    last = constants.LinkTime;
-                }
-            }
+            var interpreter =
+                new Interpreter.Interpreter("quantumplation", "MGBDesign", "DesignValues", "50cf7a7ebcf0093e25bf27a2fe3d010e6e45b5bc");
+
+            var context = new TravelContext {Distance = 10};
+            interpreter.Populate(context);
+            var c = context.Constants;
+            Console.WriteLine($"Constants:\n" +
+                              $" - {nameof(c.BaseLinkTime)}: {c.BaseLinkTime}\n" +
+                              $" - {nameof(c.BaseLoadingTime)}: {c.BaseLoadingTime}\n" +
+                              $" - {nameof(c.BasePayloadTime)}: {c.BaseRange}\n" +
+                              $" - {nameof(c.LinkTime)}: {c.LinkTime}\n" +
+                              $" - {nameof(c.PayloadTime)}: {c.PayloadTime}\n" +
+                              $" - {nameof(c.Range)}: {c.Range}\n" +
+                              $"");
         }
     }
 }

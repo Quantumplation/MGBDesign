@@ -6,13 +6,22 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    public abstract class TravelConstants
+    public abstract class BaseConstants<T, TSelf>
+        where T : BaseContext<TSelf, T>
+        where TSelf : BaseConstants<T, TSelf>
     {
-        protected TravelContext _context;
-        public TravelConstants(TravelContext context)
+        protected T _context;
+
+        protected BaseConstants(T context)
         {
             _context = context;
         }
+    }
+
+    public abstract class TravelConstants 
+        : BaseConstants<TravelContext, TravelConstants>
+    {
+        protected TravelConstants(TravelContext context) : base(context) { }
 
         public abstract decimal BaseRange { get; }
         public abstract decimal BaseLinkTime { get; }

@@ -18,22 +18,24 @@ namespace Interpreter
 
         private Assembly _compiledAssembly;
 
-        public Interpreter(Uri repo, string token, string commitHash = null)
+        public Interpreter(string account, string repo, string project, string commitHash = null)
         {
             var wc = new WebClient();
+            var baseUriStr = $"https://cdn.rawgit.com/{account}/{repo}/{commitHash}/{project}/";
+            var baseUri = new Uri(baseUriStr);
             // Fetch csProj file
-            var csProj = new Uri(repo, $"{commitHash}/DesignValues/DesignValues.csproj?token={token}");
+            var csProj = new Uri(baseUri, $"{project}.csproj");
             var projContents = wc.DownloadString(csProj);
-            var includes = Regex.Matches(projContents, "<Compile Include=\"((?!Properties).*\\.cs)\"/>");
+            var includes = Regex.Matches(projContents, "<Compile Include=\"((?!Properties).*\\.cs)\".*/>");
             var files = new List<string>();
             foreach (var match in includes.OfType<Match>())
             {
-                var fileUri = new Uri(repo, $"{commitHash}/DesignValues/{match.Captures[0]}?token={token}");
+                var fileUri = new Uri(baseUri, $"{match.Groups[1].Captures[0]}");
                 files.Add(wc.DownloadString(fileUri));
             }
             var trees = files.Select(x => SyntaxFactory.ParseSyntaxTree(x));
             var compilation = CSharpCompilation.Create(
-                assemblyName: "a.dll",
+                assemblyName: $"{Guid.NewGuid().ToString("N")}.dll",
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                 syntaxTrees: trees,
                 references: new[]
@@ -74,9 +76,6 @@ namespace Interpreter
             //            var compileResult = compilation.Emit(stream);
             //            compiledAssembly = Assembly.Load(stream.GetBuffer());
             //        }
-            //        var type = compiledAssembly.GetTypes().SingleOrDefault(x => typeof (T).IsAssignableFrom(x));
-            //        if (type == null) throw new NullReferenceException();
-            //        return (T) Activator.CreateInstance(type, contexts);
             //    }
             //    finally
             //    {
@@ -85,5 +84,21 @@ namespace Interpreter
 
             //}
         }
+
+        public void Populate<T>(T contextA)
+            where T : IContext
+        {
+            var contextType = contextA.GetType();
+            Type baseType = contextType;
+            while (baseType != null && (!baseType.IsConstructedGenericType || baseType.GetGenericTypeDefinition() != typeof (BaseContext<,>)))
+            {
+                baseType = contextType.BaseType;
+            }
+            var constantsType = baseType.GetGenericArguments()[0];
+            var type = _compiledAssembly.GetTypes().SingleOrDefault(x => constantsType.IsAssignableFrom(x));
+            if (type == null) throw new NullReferenceException();
+            var constants = Activator.CreateInstance(type, contextA);
+            contextA.SetConstant(constants);
+        } 
     }
 }
