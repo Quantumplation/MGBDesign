@@ -6,24 +6,16 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    public interface IContext
-    {
-        void SetConstant(object constants);
-    }
-    public class BaseContext<T, TSelf> : IContext
+    public abstract class BaseContext<T, TSelf>
         where T : BaseConstants<TSelf, T>
-        where TSelf : BaseContext<T, TSelf>
+        where TSelf: BaseContext<T, TSelf>
     {
-        public T Constants { get; set; }
-
-        public void SetConstant(object constants)
+        public T Get(IRuleProvider rules)
         {
-            Constants = (T) constants;
+            return rules.Get<T, TSelf>((TSelf)this);
         }
     }
-
-    public class TravelContext 
-        : BaseContext<TravelConstants, TravelContext>
+    public class TravelContext : BaseContext<TravelConstants, TravelContext>
     {
         public decimal Distance { get; set; }
     }

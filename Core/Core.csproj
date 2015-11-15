@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Beacon.cs" />
+    <Compile Include="IRuleProvider.cs" />
     <Compile Include="TravelConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TravelContext.cs" />

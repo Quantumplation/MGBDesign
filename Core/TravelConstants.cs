@@ -11,15 +11,12 @@ namespace Core
         where TSelf : BaseConstants<T, TSelf>
     {
         protected T _context;
-
-        protected BaseConstants(T context)
+        public BaseConstants(T context)
         {
             _context = context;
         }
     }
-
-    public abstract class TravelConstants 
-        : BaseConstants<TravelContext, TravelConstants>
+    public abstract class TravelConstants : BaseConstants<TravelContext, TravelConstants>
     {
         protected TravelConstants(TravelContext context) : base(context) { }
 

@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Interpreter
 {
-    public class Interpreter
+    public class Interpreter : IRuleProvider
     {
 
         private Assembly _compiledAssembly;
@@ -48,45 +48,11 @@ namespace Interpreter
                 var compileResult = compilation.Emit(stream);
                 _compiledAssembly = Assembly.Load(stream.GetBuffer());
             }
-
-            //public T Get<T>(context)
-            //{
-            //    // Get the file
-            //    // TODO: network
-            //    var temp = Path.GetTempFileName();
-
-            //    try
-            //    {
-            //        File.Copy(uri, temp, true);
-            //        var file = File.ReadAllText(temp);
-            //        var tree = SyntaxFactory.ParseSyntaxTree(file);
-            //        var compilation = CSharpCompilation.Create(
-            //            assemblyName: "a.dll",
-            //            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
-            //            syntaxTrees: new[] {tree},
-            //            references:
-            //                new[]
-            //                {
-            //                    MetadataReference.CreateFromFile(typeof (object).Assembly.Location),
-            //                    MetadataReference.CreateFromFile(typeof (Beacon).Assembly.Location)
-            //                });
-            //        Assembly compiledAssembly;
-            //        using (var stream = new MemoryStream())
-            //        {
-            //            var compileResult = compilation.Emit(stream);
-            //            compiledAssembly = Assembly.Load(stream.GetBuffer());
-            //        }
-            //    }
-            //    finally
-            //    {
-            //        File.Delete(temp);
-            //    }
-
-            //}
         }
 
-        public void Populate<T>(T contextA)
-            where T : IContext
+        public TConstants Get<TConstants, TContext>(TContext contextA)
+            where TConstants : BaseConstants<TContext, TConstants>
+            where TContext : BaseContext<TConstants, TContext>
         {
             var contextType = contextA.GetType();
             Type baseType = contextType;
@@ -98,7 +64,7 @@ namespace Interpreter
             var type = _compiledAssembly.GetTypes().SingleOrDefault(x => constantsType.IsAssignableFrom(x));
             if (type == null) throw new NullReferenceException();
             var constants = Activator.CreateInstance(type, contextA);
-            contextA.SetConstant(constants);
+            return (TConstants)constants;
         } 
     }
 }
