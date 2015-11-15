@@ -40,14 +40,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Travel\Carrier\Loading.cs" />
+    <Compile Include="Travel\Carrier\Travel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ConcreteTravelConstants.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{c8651b9d-354f-4b92-ac0f-47ed21acaeac}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BasicEconomy\" />
+    <Folder Include="Combat\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

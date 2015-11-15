@@ -40,11 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseConstants.cs" />
+    <Compile Include="BaseContext.cs" />
     <Compile Include="Beacon.cs" />
     <Compile Include="IRuleProvider.cs" />
-    <Compile Include="TravelConstants.cs" />
+    <Compile Include="Travel\BaseTravel.cs" />
+    <Compile Include="Travel\BaseLoading.cs" />
+    <Compile Include="Travel\Carrier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TravelContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BasicEconomy\" />
+    <Folder Include="Combat\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
